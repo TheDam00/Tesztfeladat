@@ -34,13 +34,23 @@ namespace Tesztfeladat
                 button1.BackColor = Color.LightGreen;            //állapotjelző és kiíró gomb
             }
             obj.ValueChanged += OnValueChanged;                  //meghívja a függvényt ha változik azérték.
+            obj.ErrorChanged += Obj_ErrorChanged;                //ha hiba van a dll-ben meghívódik a függvény
+        }
+
+        private void Obj_ErrorChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (ertek != null)                                   //megvizsgálom, hogy nem NULL-e az érték
+            {
+                textBox1.Text += "Hibaüzenet: "+error;
+                textBox1.Text += Environment.NewLine;
+            }
         }
 
         private void OnValueChanged(object sender, PropertyChangedEventArgs e) //ezt hívja meg változáskor
         {
             
             textBox2.Text = Convert.ToString(szamlalo);
-            if (ertek == null)                                   //megvizsgálom, hogy NULL e az érték
+            if (ertek == null)                                   //megvizsgálom, hogy NULL-e az érték
             {
                 textBox1.Text += "NULL";
                 textBox1.Text += Environment.NewLine;
@@ -75,7 +85,7 @@ namespace Tesztfeladat
                         {                                                                //lefut a maradék 4 karakternek a vizsgálata is 
                             if (char.IsDigit(tmp_string[i + 1]) && char.IsDigit(tmp_string[i + 1]) && char.IsDigit(tmp_string[i + 1]) && char.IsDigit(tmp_string[i + 1]))
                             {
-                                textBox1.AppendText(Convert.ToString(tmp_string + "\t MEGFELELŐ"));
+                                textBox1.AppendText(tmp_string + "\t MEGFELELŐ");
                                 szamlalo++;
                             }
                             else break;
@@ -87,7 +97,7 @@ namespace Tesztfeladat
                 goto kesz;                                      //nem elegáns a GOTO de egy helyen van minden, máshova nem ugrik
             }
             else goto kesz;
-            kesz: textBox1.AppendText(Convert.ToString(ertek + "\t NEM MEGFELELŐ"));
+            kesz: textBox1.AppendText(ertek + "\t NEM MEGFELELŐ");
         }
 
         void Leall()
@@ -106,6 +116,19 @@ namespace Tesztfeladat
             set
             {
                 ertek = obj.Value;                            // itt rakom be a DLL Value értékét
+            }
+        }
+
+        private string error;
+        public string Error
+        {
+            get
+            {
+                return error;
+            }
+            set
+            {
+                error = obj.ErrorMessage;                            // itt rakom be a DLL error message értékét
             }
         }
 
